@@ -3,7 +3,7 @@ import axios from 'axios'
 
 
 export async function getWeeklyWeather(city) {
-   const WEATHERAPI_KEY = import.meta.env.WEATHERAPI_KEY;
+   const WEATHERAPI_KEY = import.meta.env.VITE_WEATHERAPI_KEY;
 
 
     const res = await axios.get('https://api.weatherapi.com/v1/forecast.json', {
@@ -17,7 +17,7 @@ export async function getWeeklyWeather(city) {
   })
   return res.data.forecast.forecastday.map((day) => ({
     date: day.date,
-    avgTemp: day.day.avgtemp_c,
+    avgTemp: `${day.day.avgtemp_c}`,  // ← 여기만 수정
     condition: day.day.condition.text,
     icon: day.day.condition.icon,
     humidity: day.day.avghumidity,
