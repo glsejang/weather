@@ -1,0 +1,37 @@
+
+
+.todoCard{
+    width: 100%;
+    border: 1px dashed red;
+    
+    h2{
+        font-size: 1rem;
+    }
+    ul{
+        font-size: 0.8rem;
+    }
+}
+
+
+.taskItem{
+    height: 50px;
+    display: flex;
+    align-items: center;
+    border: 1px solid black;
+    span{
+        background-color: blueviolet;
+        border: 1px solid blue;
+        width: 20%;
+        font-size: 0.9rem;
+    }
+    ul{
+        padding: 0;
+        padding-left: 15px;
+    }
+}
+
+
+.sortbtn{
+    width: 50%;
+    height: 30px;
+}

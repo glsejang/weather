@@ -6,7 +6,7 @@ export function TodoCard({ todoCard }) {
       <h2 className="plantName">{todoCard.name}</h2>
       {todoCard.tasks.map((task, idx) => (
         <div key={idx} className="taskItem">
-          <h4>{task.date}</h4>
+          <span>{task.date}</span>
           <ul>
             {task.todos.map((todo, i) => (
               <li key={i}>{todo}</li>
