@@ -18,8 +18,8 @@ function RegionSelector({ selectedDo, setSelectedDo, selectedCity, setSelectedCi
   };
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: 400 }}>
-      <h2>도-시(구) 선택</h2>
+    <div className='region' style={{ fontFamily: 'Arial, sans-serif', maxWidth: 400 }}>
+      <h4>도-시(구) 선택</h4>
 
       <div style={{ marginBottom: 12 }}>
         <label htmlFor="select-do" style={{ marginRight: 8 }}>

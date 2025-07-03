@@ -32,12 +32,22 @@ function App() {
 
   const [todoCard, setTodoCard] = useState([]); // 구조화된 데이터
 
-  const addPlant = (plantName) => {
-    setPlants(prev => {
-      if (prev.includes(plantName)) return prev;
-      return [...prev, plantName];
-    });
-  };
+const addPlant = async (plantName) => {
+  const trimmed = plantName.trim();
+  if (!trimmed) return;
+
+  const alreadyExists = plants.some(name => name.toLowerCase() === trimmed.toLowerCase());
+  if (alreadyExists) return;
+
+  setPlants(prev => [...prev, trimmed]);
+
+  try {
+    await db.plants.put({ name: trimmed }); // 중복이면 덮어쓰기
+  } catch (err) {
+    console.error('식물 저장 실패:', err);
+  }
+};
+
 
   useEffect(() => {
     async function fetchTodos() {
@@ -72,16 +82,6 @@ function App() {
     const savedTodos = await db.todos.toArray();
     setTodoCard(savedTodos);
   };
-  useEffect(() => {
-    async function savePlants() {
-      for (const name of plants) {
-        await db.plants.put({ name }); // 중복되면 덮어쓰기
-      }
-    }
-    savePlants();
-  }, [plants]);
-
-
 
 
   const fetchTodosFromGemini = async () => {
@@ -90,26 +90,39 @@ function App() {
       return;
     }
 
+    if (loading) return; // 중복 클릭 방지
+
     const cityInEnglish = cityNameMap[selectedCity] || selectedCity;
 
     try {
-      
-      setLoading(true); // 로딩 시작
+      setLoading(true);
 
       const weatherData = await getWeeklyWeather(cityInEnglish);
       setForecast(weatherData);
 
       const prompt = makeWeatherPrompt(cityInEnglish, weatherData, plants);
+
       const responseText = await askGemini(prompt);
       const parsed = parseTodoResponse(responseText);
 
-      setTodoCard(parsed); // 상태 저장 → useEffect 통해 db에 저장됨
+      setTodoCard(parsed);
+
+      // todoCard가 갱신된 후 DB에 저장
+      await db.todos.clear();
+      for (const todo of parsed) {
+        await db.todos.put(todo);
+      }
     } catch (error) {
       console.error("Gemini 또는 날씨 API 호출 실패:", error);
     } finally {
       setLoading(false);
     }
   };
+
+const handleCreateAndSave = async () => {
+  if (loading) return;
+  await fetchTodosFromGemini();
+};
     
   useEffect(() => {
   async function fetchRegion() {
@@ -132,42 +145,48 @@ function App() {
   useEffect(() => {
     async function fetchPlants() {
       const storedPlants = await db.plants.toArray();
-      if (storedPlants.length > 0) {
-        setPlants(storedPlants.map(p => p.name));
-      }
+      const uniqueNames = [...new Set(storedPlants.map(p => p.name))];
+      setPlants(uniqueNames);
     }
     fetchPlants();
   }, []);
 
-    useEffect(() => {
-      db.plants.clear();
-      plants.forEach(name => {
-        db.plants.add({ name });
-      });
-    }, [plants]);
+    
 
-    const handleCreateAndSave = async () => {
-      await fetchTodosFromGemini();
-      await handleSaveTodos();
-    };
 
 
 
   return (
     <>
       <div className='wrap'>
-        <div className='info'>          
-          <RegionSelector
+         {loading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+          <p>로딩 중입니다...</p>
+        </div>
+      )}
+        
+        <div className='info'> 
+          <div className='infoBox left'>
+            <RegionSelector
             selectedDo={selectedDo}
             setSelectedDo={setSelectedDo}
             selectedCity={selectedCity}
             setSelectedCity={setSelectedCity}
-          />
-          <PlantInput addPlant={addPlant} />
+            />
+            <PlantInput addPlant={addPlant} />
 
-          <SavedInfo />
-          <button onClick={handleCreateAndSave}>할 일 생성하기</button>
+            </div>   
+
+          <div className='width right'>
+            <SavedInfo />
+          </div>      
+          
+
+          
         </div>
+        <button variant="success" onClick={handleCreateAndSave}>할 일 생성하기</button>
+
         <button onClick={() => setShowPlants(prev => !prev)}>내 식물 보기</button>
           {showPlants && (
             <ul>

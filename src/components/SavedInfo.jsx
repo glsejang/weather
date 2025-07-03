@@ -17,7 +17,7 @@ export function SavedInfo() {
 
   return (
     <div className="savedInfo">
-      <h3>✅ 저장된 정보</h3>
+      <h4>✅ 저장된 정보</h4>
       {region ? (
         <div>
           <strong>지역:</strong> {region.do} {region.city}
