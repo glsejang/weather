@@ -22,16 +22,22 @@ function App() {
   const [sort, setSort] = useState('날짜')
   const[forecast, setForecast] = useState([])
 
+  const [loading, setLoading] = useState(false);
+
   const [selectedDo, setSelectedDo] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [showPlants, setShowPlants] = useState(false);
 
-  const [plants, setPlants] = useState(['장미', '로즈마리']);
+  const [plants, setPlants] = useState([]);
 
   const [todoCard, setTodoCard] = useState([]); // 구조화된 데이터
 
   const addPlant = (plantName) => {
-  setPlants([...plants, plantName]);
-};
+    setPlants(prev => {
+      if (prev.includes(plantName)) return prev;
+      return [...prev, plantName];
+    });
+  };
 
   useEffect(() => {
     async function fetchTodos() {
@@ -66,6 +72,14 @@ function App() {
     const savedTodos = await db.todos.toArray();
     setTodoCard(savedTodos);
   };
+  useEffect(() => {
+    async function savePlants() {
+      for (const name of plants) {
+        await db.plants.put({ name }); // 중복되면 덮어쓰기
+      }
+    }
+    savePlants();
+  }, [plants]);
 
 
 
@@ -79,18 +93,21 @@ function App() {
     const cityInEnglish = cityNameMap[selectedCity] || selectedCity;
 
     try {
+      
+      setLoading(true); // 로딩 시작
+
       const weatherData = await getWeeklyWeather(cityInEnglish);
       setForecast(weatherData);
 
       const prompt = makeWeatherPrompt(cityInEnglish, weatherData, plants);
-      console.log("[Prompt]", prompt);
-
       const responseText = await askGemini(prompt);
       const parsed = parseTodoResponse(responseText);
 
       setTodoCard(parsed); // 상태 저장 → useEffect 통해 db에 저장됨
     } catch (error) {
       console.error("Gemini 또는 날씨 API 호출 실패:", error);
+    } finally {
+      setLoading(false);
     }
   };
     
@@ -112,15 +129,15 @@ function App() {
   }, [selectedDo, selectedCity]);
 
 
-    useEffect(() => {
-      async function fetchPlants() {
-        const storedPlants = await db.plants.toArray();
-        if (storedPlants.length > 0) {
-          setPlants(storedPlants.map(p => p.name));
-        }
+  useEffect(() => {
+    async function fetchPlants() {
+      const storedPlants = await db.plants.toArray();
+      if (storedPlants.length > 0) {
+        setPlants(storedPlants.map(p => p.name));
       }
-      fetchPlants();
-    }, []);
+    }
+    fetchPlants();
+  }, []);
 
     useEffect(() => {
       db.plants.clear();
@@ -151,7 +168,14 @@ function App() {
           <SavedInfo />
           <button onClick={handleCreateAndSave}>할 일 생성하기</button>
         </div>
-
+        <button onClick={() => setShowPlants(prev => !prev)}>내 식물 보기</button>
+          {showPlants && (
+            <ul>
+              {plants.map((name, i) => (
+                <li key={i}>{name}</li>
+              ))}
+            </ul>
+          )}
 
 
         <div className='todo'>
@@ -172,7 +196,7 @@ function App() {
             todoCard.map((plant, idx) => (
               <TodoCard key={idx} todoCard={plant} />
             ))
-}
+          }
           
 
           
