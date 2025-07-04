@@ -6,7 +6,7 @@ export function DateGroupedView({ data }) {
   return (
     <div className="dateView">
       {grouped.map((group, idx) => (
-        <div key={idx} className="dateGroup">
+        <div key={idx} className="dateGroup"> 
           <h3>{group.date}</h3>
           <ul>
             {group.tasks.map((task, i) => (
@@ -17,6 +17,22 @@ export function DateGroupedView({ data }) {
           </ul>
         </div>
       ))}
+
+      
+
+
+
+
+
+
+
+
     </div>
+
+      
+
+
+
+
   );
 }

@@ -1,4 +1,7 @@
 import { useState } from "react";
+import InputGroup from 'react-bootstrap/InputGroup';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 
 function PlantInput({ addPlant }) {
@@ -20,14 +23,28 @@ function PlantInput({ addPlant }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
+      <InputGroup  size="sm" className="mb-3">
+        
+        <Form.Control
         value={plantName}
         onChange={handleChange}
         placeholder="식물 이름"
         required
       />
-      <button type="submit">입력</button>
+        <Button variant="outline-secondary" id="button-addon1" type="submit">
+            입력
+        </Button>
+      </InputGroup>
+
+
+
+      
+      {/* <button type="submit">입력</button> */}
     </form>
+    
+
+
+
   );
 }
 

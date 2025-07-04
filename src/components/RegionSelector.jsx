@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { regionData } from '../data/regionData.js';
+import Form from 'react-bootstrap/Form';
 
 
 function RegionSelector({ selectedDo, setSelectedDo, selectedCity, setSelectedCity }) {
@@ -22,24 +23,24 @@ function RegionSelector({ selectedDo, setSelectedDo, selectedCity, setSelectedCi
       <h4>도-시(구) 선택</h4>
 
       <div style={{ marginBottom: 12 }}>
-        <label htmlFor="select-do" style={{ marginRight: 8 }}>
+        <Form.Label htmlFor="select-do" style={{ marginRight: 8 }}>
           도/광역시:
-        </label>
-        <select id="select-do" value={selectedDo} onChange={onDoChange}>
+        </Form.Label>
+        <Form.Select size="sm"  id="select-do" value={selectedDo} onChange={onDoChange}>
           <option value="">-- 선택하세요 --</option>
           {doList.map((doName) => (
             <option key={doName} value={doName}>
               {doName}
             </option>
           ))}
-        </select>
+        </Form.Select>
       </div>
 
       <div style={{ marginBottom: 12 }}>
-        <label htmlFor="select-city" style={{ marginRight: 8 }}>
+        <Form.Label htmlFor="select-city" style={{ marginRight: 8 }}>
           시/구/군:
-        </label>
-        <select
+        </Form.Label>
+        <Form.Select size="sm"
           id="select-city"
           value={selectedCity}
           onChange={onCityChange}
@@ -51,7 +52,7 @@ function RegionSelector({ selectedDo, setSelectedDo, selectedCity, setSelectedCi
               {cityName}
             </option>
           ))}
-        </select>
+        </Form.Select>
       </div>
 
       {selectedDo && selectedCity && (

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Button, Card, Container, Accordion, ButtonGroup   } from 'react-bootstrap';
+
 
 import { getWeeklyWeather } from './api/weatherInfo'
 import { makeWeatherPrompt } from './api/makePrompt'
@@ -159,49 +161,58 @@ const handleCreateAndSave = async () => {
   return (
     <>
       <div className='wrap'>
-         {loading && (
-        <div className="loading-overlay">
-          <div className="spinner"></div>
-          <p>로딩 중입니다...</p>
-        </div>
-      )}
+        {loading && (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+            <p>로딩 중입니다...</p>
+          </div>
+        )}
+
+
+        
         
         <div className='info'> 
-          <div className='infoBox left'>
-            <RegionSelector
-            selectedDo={selectedDo}
-            setSelectedDo={setSelectedDo}
-            selectedCity={selectedCity}
-            setSelectedCity={setSelectedCity}
-            />
-            <PlantInput addPlant={addPlant} />
 
-            </div>   
+          <Accordion defaultActiveKey="0">
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>정보 입력#1</Accordion.Header>
+              <Accordion.Body>
+                <RegionSelector
+                  selectedDo={selectedDo}
+                  setSelectedDo={setSelectedDo}
+                  selectedCity={selectedCity}
+                  setSelectedCity={setSelectedCity}
+                  />
+                <PlantInput addPlant={addPlant} />
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="1">
+              <Accordion.Header>저장 내용 #2</Accordion.Header>
+              <Accordion.Body>
+                <SavedInfo />
 
-          <div className='width right'>
-            <SavedInfo />
-          </div>      
-          
+                
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+
 
           
         </div>
-        <button variant="success" onClick={handleCreateAndSave}>할 일 생성하기</button>
-
-        <button onClick={() => setShowPlants(prev => !prev)}>내 식물 보기</button>
-          {showPlants && (
-            <ul>
-              {plants.map((name, i) => (
-                <li key={i}>{name}</li>
-              ))}
-            </ul>
-          )}
-
-
+        <div className="d-grid gap-2">
+          <Button variant="primary"  onClick={handleCreateAndSave}>할 일 생성하기</Button>
+        </div>
+  
         <div className='todo'>
-          <button className='sortbtn' onClick={()=>{ setSort('날짜')}}>날짜 별</button>
 
-          <button className='sortbtn' onClick={()=>{ setSort('식물')}}>식물 별</button>
+          <ButtonGroup aria-label="Basic example" className="w-100">
 
+            <Button variant="secondary" className='sortbtn' onClick={()=>{ setSort('날짜')}}>날짜 별</Button>
+
+            <Button variant="secondary" className='sortbtn' onClick={()=>{ setSort('식물')}}>식물 별</Button>
+
+
+          </ButtonGroup>
           {sort === '날짜' ? (
               <DateGroupedView data={todoCard} />
             ) : (
