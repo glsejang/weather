@@ -23,10 +23,10 @@ export function DateGroupedView({ data, forecast }) {
   const weatherImageMap = {
   "맑음": "/weather/img/sunny.jpg",
   "부분 흐림": "/weather/img/partly-cloudy.jpg",
-  "곳에 따라 비": "/weather/img/rain.jpg",
+  "곳에 따라 비": "/weather/img/Patchy-rain-nearby.jpg",
   "보통 비": "/weather/img/rain.jpg",
-  "약한 비": "/weather/img/rain.jpg",
-  "이슬비": "/weather/img/drizzle.jpg",
+  "약한 비": "/weather/img/Light-rain.jpg",
+  "이슬비": "/weather/img/rain.jpg",
   "흐림": "/weather/img/cloudy.jpg",
   "뇌우": "/weather/img/thunderstorm.jpg",
   "쾌청": "/weather/img/clear.jpg",

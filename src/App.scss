@@ -15,6 +15,13 @@
 
 
 
+.todo{
+  margin-top: 5px;
+}
+
+.btn-group{
+  margin-bottom: 10px;
+}
 
 .todoText{
     color: white;
@@ -25,3 +32,16 @@
         font-weight: 500;
     }
 }
+
+
+
+.saved{
+  display: flex;
+}
+
+.savedInfo{
+  width: 40%;
+}
+
+
+

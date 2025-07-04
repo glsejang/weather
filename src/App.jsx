@@ -146,7 +146,7 @@ function App() {
       <div className="info">
         <Accordion defaultActiveKey="0">
           <Accordion.Item eventKey="0">
-            <Accordion.Header>정보 입력 #1</Accordion.Header>
+            <Accordion.Header>지역 / 식물 입력</Accordion.Header>
             <Accordion.Body>
               <RegionSelector
                 selectedDo={selectedDo}
@@ -158,7 +158,7 @@ function App() {
             </Accordion.Body>
           </Accordion.Item>
           <Accordion.Item eventKey="1">
-            <Accordion.Header>저장 내용 #2</Accordion.Header>
+            <Accordion.Header>저장 내용 보기</Accordion.Header>
             <Accordion.Body>
               <SavedInfo />
             </Accordion.Body>

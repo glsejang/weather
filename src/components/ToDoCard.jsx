@@ -6,7 +6,7 @@ export function TodoCard({ todoCard }) {
   if (!todoCard) return null; // 안전하게 처리
 
   return (
-       <Accordion defaultActiveKey="0" className="mb-3">
+    <Accordion defaultActiveKey="1" className="mb-3">
       <Accordion.Item eventKey="0">
         <Accordion.Header>{todoCard.name}</Accordion.Header>
         <Accordion.Body>
