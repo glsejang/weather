@@ -39,6 +39,7 @@ export function makeWeatherPrompt(city, forecast, plants) {
     - 2025-07-05:
       - 오전에 물 주세요.
       - 통풍에 주의하세요.
+      
     - 2025-07-04:
       - 할 일 없음
       - 날씨가 좋네요

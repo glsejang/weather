@@ -23,7 +23,7 @@ export function DateGroupedView({ data, forecast }) {
   const weatherImageMap = {
   "맑음": "/weather/img/sunny.jpg",
   "부분 흐림": "/weather/img/partly-cloudy.jpg",
-  "곳에 따라 비": "/weather/img/Patchy-rain-nearby.jpg",
+  "곳에 따라 비": "/weather/img/patchy-rain-nearby.jpg",
   "보통 비": "/weather/img/rain.jpg",
   "약한 비": "/weather/img/Light-rain.jpg",
   "이슬비": "/weather/img/rain.jpg",
@@ -53,27 +53,28 @@ export function DateGroupedView({ data, forecast }) {
         
         <Card  key={idx} className="bg-dark text-white mb-3 dateCard" style={{minWidth:'400px'}}>
           <Card.Img 
-            src={weather[group.date]?.image || './img/default.jpg'} 
+            src={weather[group.date]?.image || '/weather/img/default.jpg'} 
             alt="Card image" 
             style={{height: '130px'}} />
           <Card.ImgOverlay style={{ backgroundColor: 'rgba(0,0,0,0.4)', overflowY: 'auto', maxHeight: '120px' }}>
-            <Card.Title>
-              <span style={{fontSize:'1rem'}}>{group.date}</span>
-              <span style={{fontSize:'1rem'}}>{weather[group.date] && ` - ${weather[group.date].conditionKo}`}</span>
-            </Card.Title>
-            <Card.Text >
-              <ListGroup variant="flush">
-                {group.tasks.map((task, i) => (
-                  <ListGroup.Item className='todoText' key={i}>
-                    <span style={{ fontSize:'1rem' }}>{task.plantName}:</span><br/>
-                    {task.todos.map((todo, idx) => (
-                      <span key={idx} style={{ display: 'block', fontSize:'0.8rem' }}>{todo}</span>
-                    ))}
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Card.Text>
-          </Card.ImgOverlay>
+          <Card.Title>
+            <span style={{fontSize:'1rem'}}>{group.date}</span>
+            <span style={{fontSize:'1rem'}}>{weather[group.date] && ` - ${weather[group.date].conditionKo}`}</span>
+          </Card.Title>
+
+          <div>
+            <ListGroup variant="flush">
+              {group.tasks.map((task, i) => (
+                <ListGroup.Item className='todoText' key={i}>
+                  <span style={{ fontSize:'1rem' }}>{task.plantName}:</span><br/>
+                  {task.todos.map((todo, idx) => (
+                    <span key={`${task.plantName}-${idx}`} style={{ display: 'block', fontSize:'0.8rem' }}>{todo}</span>
+                  ))}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </div>
+        </Card.ImgOverlay>
         </Card>
       ))}
     </div>
