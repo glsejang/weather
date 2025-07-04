@@ -55,7 +55,7 @@ export function DateGroupedView({ data, forecast }) {
           <Card.Img 
             src={weather[group.date]?.image || '/weather/img/default.jpg'} 
             alt="Card image" 
-            style={{height: '130px'}} />
+            style={{height: '130px', objectFit: 'cover'}} />
           <Card.ImgOverlay style={{ backgroundColor: 'rgba(0,0,0,0.4)', overflowY: 'auto', maxHeight: '120px' }}>
           <Card.Title>
             <span style={{fontSize:'1rem'}}>{group.date}</span>
