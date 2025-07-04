@@ -43,25 +43,38 @@ export function parseTodoResponse(responseText) {
   for (const line of lines) {
     const trimmed = line.trim();
 
-    // 1. 날짜 먼저 체크
-    if (trimmed.startsWith('- ') && trimmed.match(/^\- \d{1,2}월 \d{1,2}일:/)) {
+    // 날짜: - 7월 10일: 또는 - 2024-07-10:
+    if (trimmed.startsWith('- ') && (/\- \d{1,2}월 \d{1,2}일:/.test(trimmed) || /\- \d{4}-\d{2}-\d{2}:/.test(trimmed))) {
       if (!currentPlant) continue;
-      const date = trimmed.replace('- ', '').replace(':', '').trim();
-      const taskObj = { date, todos: [] };
+
+      let isoDate = null;
+
+      if (/\d{4}-\d{2}-\d{2}/.test(trimmed)) {
+        // ISO 날짜 추출
+        isoDate = trimmed.match(/\d{4}-\d{2}-\d{2}/)[0];
+      } else {
+        // 한국어 날짜 처리
+        const dateStr = trimmed.replace('- ', '').replace(':', '').trim(); // "7월 10일"
+        const [_, month, day] = dateStr.match(/(\d{1,2})월\s*(\d{1,2})일/) || [];
+        const year = new Date().getFullYear();
+        isoDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      }
+
+      const taskObj = { date: isoDate, todos: [] };
       currentPlant.tasks.push(taskObj);
       currentDate = taskObj;
-    
-    // 2. 식물 이름
+
+    // 식물명: - 장미:
     } else if (trimmed.startsWith('- ') && trimmed.endsWith(':')) {
-      const name = trimmed.replace('- ', '').replace(':', '').trim();
+      const name = trimmed.slice(2, -1).trim();
       currentPlant = { name, tasks: [] };
       result.push(currentPlant);
       currentDate = null;
 
-    // 3. 실제 할 일
-    } else if (trimmed.startsWith('-')) {
+    // 할 일: - 오전에 물 주세요.
+    } else if (trimmed.startsWith('- ')) {
       if (!currentDate) continue;
-      const todo = trimmed.replace('- ', '').trim();
+      const todo = trimmed.slice(2).trim();
       currentDate.todos.push(todo);
     }
   }

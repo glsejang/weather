@@ -14,3 +14,14 @@
 }
 
 
+
+
+.todoText{
+    color: white;
+    background-color: rgba($color: white, $alpha: 0.0);
+
+    span{
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+}

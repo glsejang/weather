@@ -17,7 +17,7 @@ export async function getWeeklyWeather(city) {
   })
   return res.data.forecast.forecastday.map((day) => ({
     date: day.date,
-    avgTemp: `${day.day.avgtemp_c}`,  // ← 여기만 수정
+    avgTemp: day.day.avgtemp_c,  
     condition: day.day.condition.text,
     icon: day.day.condition.icon,
     humidity: day.day.avghumidity,
@@ -26,3 +26,4 @@ export async function getWeeklyWeather(city) {
   }))
 }
 
+ 
