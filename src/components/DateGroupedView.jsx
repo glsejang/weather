@@ -45,8 +45,6 @@ export function DateGroupedView({ data, forecast }) {
   return acc;
 }, {});
 
-console.log("grouped:", grouped.map(g => g.date));
- console.log("weather map:", weather)
 
   return (
     <div >
@@ -58,7 +56,7 @@ console.log("grouped:", grouped.map(g => g.date));
             src={weather[group.date]?.image || './img/default.jpg'} 
             alt="Card image" 
             style={{height: '130px'}} />
-          <Card.ImgOverlay style={{ backgroundColor: 'rgba(0,0,0,0.4)', overflowY: 'hidden', maxHeight: '120px' }}>
+          <Card.ImgOverlay style={{ backgroundColor: 'rgba(0,0,0,0.4)', overflowY: 'auto', maxHeight: '120px' }}>
             <Card.Title>
               <span style={{fontSize:'1rem'}}>{group.date}</span>
               <span style={{fontSize:'1rem'}}>{weather[group.date] && ` - ${weather[group.date].conditionKo}`}</span>

@@ -121,8 +121,10 @@ function App() {
 
       const prompt = makeWeatherPrompt(cityInEnglish, weatherData, plants);
       const responseText = await askGemini(prompt);
-      console.log(responseText)
+
       const parsed = parseTodoResponse(responseText);
+      console.log('parsed:', parsed);
+
       setTodoCard(parsed); // 저장은 useEffect에서 처리됨
 
     } catch (err) {
