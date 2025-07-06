@@ -26,4 +26,3 @@ export async function getWeeklyWeather(city) {
   }))
 }
 
-console.log(getWeeklyWeather('seul'))

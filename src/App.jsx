@@ -107,7 +107,6 @@ function App() {
       if (saved.length > 0) {
         setForecast(saved);
       }
-      console.log(saved)
     }
     loadForecast();
   }, []);
@@ -138,12 +137,12 @@ function App() {
     } finally {
       setLoading(false);
     }
+
   };
 
+      console.log(forecast)
 
-  
 
-  console.log(selectedCity, plants)
 
 
   return (
@@ -160,7 +159,7 @@ function App() {
 
       <div className="info">
         <Accordion defaultActiveKey="0">
-          <Accordion.Item eventKey="0">
+          <Accordion.Item eventKey="1">
             <Accordion.Header>지역 / 식물 입력</Accordion.Header>
             <Accordion.Body>
               <RegionSelector

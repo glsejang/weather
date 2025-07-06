@@ -1,10 +1,11 @@
+import { useState } from 'react';
 import { groupingDate } from '../api/groupingDate';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Card from 'react-bootstrap/Card';
 
 export function DateGroupedView({ data, forecast }) {
   const grouped = groupingDate(data);
-
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   const conditionKoMap = {
     "Sunny": "맑음",
@@ -33,56 +34,92 @@ export function DateGroupedView({ data, forecast }) {
   "날씨 정보 없음": "/weather/img/default.jpg",
 };
 
+    const weather = forecast.reduce((acc, cur) => {
+    const dateKey = cur.date?.slice(0, 10);
+    if (dateKey) {
+      const conditionEn = cur.condition?.trim() || '날씨 정보 없음';
+      const conditionKo = conditionKoMap[conditionEn] || conditionEn;
+      const image = weatherImageMap[conditionKo] || weatherImageMap['날씨 정보 없음'];
 
-  const weather = forecast.reduce((acc, cur) => {
-  const dateKey = cur.date?.slice(0, 10);
-  if (dateKey) {
-    const conditionEn = cur.condition?.trim() || '날씨 정보 없음';
-    const conditionKo = conditionKoMap[conditionEn] || conditionEn;
-    const image = weatherImageMap[conditionKo] || weatherImageMap['날씨 정보 없음'];
-    acc[dateKey] = { conditionKo, image };
-  }
-  return acc;
-}, {});
+      acc[dateKey] = {
+        conditionKo,
+        image,
+        avgTemp: cur.avgTemp,
+        humidity: cur.humidity,
+        rainChance: cur.rainChance,
+        icon: cur.icon,
+      };
+    }
+    return acc;
+  }, {});
 
 
   return (
-    <div >
+    <div>
       {grouped.map((group, idx) => (
-        
-        
-        <Card  key={idx} className="bg-dark text-white mb-3 dateCard" style={{minWidth:'400px'}}>
-          <Card.Img 
-            src={weather[group.date]?.image || '/weather/img/default.jpg'} 
-            alt="Card image" 
-            style={{height: '130px', objectFit: 'cover'}} />
-          <Card.ImgOverlay style={{ backgroundColor: 'rgba(0,0,0,0.4)', overflowY: 'auto', maxHeight: '120px' }}>
-          <Card.Title>
-            <span style={{fontSize:'1rem'}}>{group.date}</span>
-            <span style={{fontSize:'1rem'}}>{weather[group.date] && ` - ${weather[group.date].conditionKo}`}</span>
-          </Card.Title>
+        <Card
+          key={idx}
+          className="bg-dark text-white mb-3 dateCard"
+          style={{cursor: 'pointer' }}
+          onClick={() => setExpandedIndex(expandedIndex === idx ? null : idx)}
+        >
+          <Card.Img
+            src={weather[group.date]?.image || '/weather/img/default.jpg'}
+            alt="날씨 이미지"
+            style={{ height: '100%', objectFit: 'cover' }}
+          />
+          <Card.ImgOverlay
+            style={{
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              overflowY: expandedIndex === idx ? 'auto' : 'hidden',
+              maxHeight: expandedIndex === idx ? 'none' : '100px',
+              transition: 'max-height 0.3s ease',
+            }}
+          >
+            <Card.Title className='dateCard_title'>
+              <span style={{ fontSize: '1rem' }}>{group.date}</span>
+              {weather[group.date] && (
+                <>
+                  <span style={{ fontSize: '1rem' }}>
+                    {" - " + weather[group.date].conditionKo}
+                  </span>
+                  <img
+                    src={`https:${weather[group.date].icon}`}
+                    alt={weather[group.date].conditionKo}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      marginLeft: '5px',
+                    }}
+                  />
+                  <div style={{ fontSize: '0.8rem', color: '#eee' }}>
+                    🌡 {weather[group.date].avgTemp}℃ &nbsp;/ 💧{" "}
+                    {weather[group.date].humidity}% &nbsp;/ ☔{" "}
+                    {weather[group.date].rainChance}%
+                  </div>
+                </>
+              )}
+            </Card.Title>
 
-          <div>
             <ListGroup variant="flush">
               {group.tasks.map((task, i) => (
-                <ListGroup.Item className='todoText' key={i}>
-                  <span style={{ fontSize:'1rem' }}>{task.plantName}:</span><br/>
+                <ListGroup.Item className="todoText" key={i}>
+                  <span style={{ fontSize: '1rem' }}>{task.plantName}:</span>
+                  <br />
                   {task.todos.map((todo, idx) => (
-                    <span key={`${task.plantName}-${idx}`} style={{ display: 'block', fontSize:'0.8rem' }}>{todo}</span>
+                    <span
+                      key={`${task.plantName}-${idx}`}
+                      style={{ display: 'block', fontSize: '0.8rem' }}
+                    >
+                      {todo}
+                    </span>
                   ))}
                 </ListGroup.Item>
               ))}
             </ListGroup>
-          </div>
-        </Card.ImgOverlay>
+          </Card.ImgOverlay>
         </Card>
       ))}
     </div>
-
-      
-
-
-
-
   );
 }
