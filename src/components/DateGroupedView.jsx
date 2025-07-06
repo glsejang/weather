@@ -18,29 +18,27 @@ export function DateGroupedView({ data, forecast }) {
     "Cloudy": "흐림",
     "Thunderstorm": "뇌우",
     "Clear": "쾌청",
-    // 필요 시 계속 추가 가능
   };
 
   const weatherImageMap = {
-  "맑음": "/weather/img/sunny.jpg",
-  "부분 흐림": "/weather/img/partly-cloudy.jpg",
-  "곳에 따라 비": "/weather/img/patchy-rain-nearby.jpg",
-  "보통 비": "/weather/img/rain.jpg",
-  "약한 비": "/weather/img/Light-rain.jpg",
-  "이슬비": "/weather/img/rain.jpg",
-  "흐림": "/weather/img/cloudy.jpg",
-  "뇌우": "/weather/img/thunderstorm.jpg",
-  "쾌청": "/weather/img/clear.jpg",
-  "날씨 정보 없음": "/weather/img/default.jpg",
-};
+    "맑음": "/weather/img/sunny.jpg",
+    "부분 흐림": "/weather/img/partly-cloudy.jpg",
+    "곳에 따라 비": "/weather/img/patchy-rain-nearby.jpg",
+    "보통 비": "/weather/img/rain.jpg",
+    "약한 비": "/weather/img/Light-rain.jpg",
+    "이슬비": "/weather/img/rain.jpg",
+    "흐림": "/weather/img/cloudy.jpg",
+    "뇌우": "/weather/img/thunderstorm.jpg",
+    "쾌청": "/weather/img/clear.jpg",
+    "날씨 정보 없음": "/weather/img/default.jpg",
+  };
 
-    const weather = forecast.reduce((acc, cur) => {
+  const weather = forecast.reduce((acc, cur) => {
     const dateKey = cur.date?.slice(0, 10);
     if (dateKey) {
       const conditionEn = cur.condition?.trim() || '날씨 정보 없음';
       const conditionKo = conditionKoMap[conditionEn] || conditionEn;
       const image = weatherImageMap[conditionKo] || weatherImageMap['날씨 정보 없음'];
-
       acc[dateKey] = {
         conditionKo,
         image,
@@ -53,73 +51,85 @@ export function DateGroupedView({ data, forecast }) {
     return acc;
   }, {});
 
-
   return (
     <div>
-      {grouped.map((group, idx) => (
-        <Card
-          key={idx}
-          className="bg-dark text-white mb-3 dateCard"
-          style={{cursor: 'pointer' }}
-          onClick={() => setExpandedIndex(expandedIndex === idx ? null : idx)}
-        >
-          <Card.Img
-            src={weather[group.date]?.image || '/weather/img/default.jpg'}
-            alt="날씨 이미지"
-            style={{ height: '100%', objectFit: 'cover' }}
-          />
-          <Card.ImgOverlay
-            style={{
-              backgroundColor: 'rgba(0,0,0,0.3)',
-              overflowY: expandedIndex === idx ? 'auto' : 'hidden',
-              maxHeight: expandedIndex === idx ? 'none' : '100px',
-              transition: 'max-height 0.3s ease',
-            }}
-          >
-            <Card.Title className='dateCard_title'>
-              <span style={{ fontSize: '1rem' }}>{group.date}</span>
-              {weather[group.date] && (
-                <>
-                  <span style={{ fontSize: '1rem' }}>
-                    {" - " + weather[group.date].conditionKo}
-                  </span>
-                  <img
-                    src={`https:${weather[group.date].icon}`}
-                    alt={weather[group.date].conditionKo}
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      marginLeft: '5px',
-                    }}
-                  />
-                  <div style={{ fontSize: '0.8rem', color: '#eee' }}>
-                    🌡 {weather[group.date].avgTemp}℃ &nbsp;/ 💧{" "}
-                    {weather[group.date].humidity}% &nbsp;/ ☔{" "}
-                    {weather[group.date].rainChance}%
-                  </div>
-                </>
-              )}
-            </Card.Title>
+      {grouped.map((group, idx) => {
+        const isExpanded = expandedIndex === idx;
+        const weatherData = weather[group.date] || {};
 
-            <ListGroup variant="flush">
-              {group.tasks.map((task, i) => (
-                <ListGroup.Item className="todoText" key={i}>
-                  <span style={{ fontSize: '1rem' }}>{task.plantName}:</span>
-                  <br />
-                  {task.todos.map((todo, idx) => (
-                    <span
-                      key={`${task.plantName}-${idx}`}
-                      style={{ display: 'block', fontSize: '0.8rem' }}
-                    >
-                      {todo}
-                    </span>
+        return (
+          <Card
+            key={idx}
+            className=" cardblock"
+            style={{
+              marginBottom: '5px',
+              backgroundColor: '#1a1a1a',
+              color: '#fff',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
+            onClick={() => setExpandedIndex(isExpanded ? null : idx)}
+          >
+            {/* 이미지 헤더 */}
+            <div style={{ position: 'relative' }}>
+              <Card.Img
+                src={weatherData.image}
+                alt="날씨 이미지"
+                style={{ height: '90px', objectFit: 'cover', opacity: 0.7 }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                  padding: '0.5rem 1rem',
+                }}
+              >
+                <Card.Title style={{ margin: 0 }}>
+                  <span>{group.date}</span>
+                  {weatherData.conditionKo && (
+                    <>
+                      <span> - {weatherData.conditionKo}</span>
+                      <img
+                        src={`https:${weatherData.icon}`}
+                        alt={weatherData.conditionKo}
+                        style={{ width: 20, height: 20, marginLeft: 8 }}
+                      />
+                      <div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                      🌡 {weatherData.avgTemp}℃ &nbsp; 💧 {weatherData.humidity}% &nbsp; ☔ {weatherData.rainChance}%
+                    </div>
+                    </>
+                  )}
+                </Card.Title>
+              </div>
+            </div>
+
+            {/* 확장 영역 */}
+            {isExpanded && (
+              <div style={{ padding: '1rem' }}>
+                
+                <ListGroup variant="flush">
+                  {group.tasks.map((task, i) => (
+                    <ListGroup.Item key={i} style={{ backgroundColor: 'rgba(26, 26, 26, 0.1)', color: '#fff' }}>
+                      <strong>{task.plantName}</strong>
+                      <br />
+                      {task.todos.map((todo, j) => (
+                        <div key={j} style={{ fontSize: '0.9rem' }}>
+                          {todo}
+                        </div>
+                      ))}
+                    </ListGroup.Item>
                   ))}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Card.ImgOverlay>
-        </Card>
-      ))}
+                </ListGroup>
+              </div>
+            )}
+          </Card>
+        );
+      })}
     </div>
   );
 }
