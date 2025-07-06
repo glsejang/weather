@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Button, Accordion, ButtonGroup } from 'react-bootstrap';
+import { Toast, ToastContainer } from "react-bootstrap";
 
 import { getWeeklyWeather } from './api/weatherInfo';
 import { makeWeatherPrompt } from './api/makePrompt';
 import { askGemini, parseTodoResponse } from './api/ask';
-import { cityNameMap } from './api/cityNameMap';
+import { cityNameMap } from './data/cityNameMap';
 import { SavedInfo } from './components/savedInfo';
 
 import RegionSelector from './components/RegionSelector';
@@ -27,29 +28,33 @@ function App() {
 
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // ✅ 식물 추가
-  const addPlant = async (plantName) => {
-    const trimmed = plantName.trim();
-    if (!trimmed || plants.includes(trimmed)) return;
-
-    setPlants(prev => [...prev, trimmed]);
-    try {
-      await db.plants.put({ name: trimmed });
-    } catch (err) {
-      console.error('식물 저장 실패:', err);
-    }
+  const resetAllState = () => {
+    setSelectedDo('');
+    setSelectedCity('');
+    setPlants([]);
+    setTodoCard([]);
+    setForecast([]);
   };
 
-  // ✅ 지역 불러오기
+  const [toast, setToast] = useState(false)
+
+
+
+
+
+    // 🔹 초기 지역/식물 불러오기
   useEffect(() => {
-    async function fetchRegion() {
+    async function fetchInitial() {
       const region = await db.region.get('selected');
       if (region) {
         setSelectedDo(region.do);
         setSelectedCity(region.city);
       }
+
+      const storedPlants = await db.plants.toArray();
+      setPlants(storedPlants.map(p => p.name));
     }
-    fetchRegion();
+    fetchInitial();
   }, []);
 
   // ✅ 지역 저장
@@ -59,15 +64,15 @@ function App() {
     }
   }, [selectedDo, selectedCity]);
 
-  // ✅ 식물 불러오기
-  useEffect(() => {
-    async function fetchPlants() {
-      const storedPlants = await db.plants.toArray();
-      const names = [...new Set(storedPlants.map(p => p.name))];
-      setPlants(names);
-    }
-    fetchPlants();
-  }, []);
+  
+    // ✅ 식물 추가
+   const addPlant = async (name) => {
+    const trimmed = name.trim();
+    if (!trimmed || plants.includes(trimmed)) return;
+    await db.plants.put({ name: trimmed });
+    setPlants(prev => [...prev, trimmed]);
+  };
+
 
   // ✅ 할 일 불러오기
   useEffect(() => {
@@ -102,6 +107,7 @@ function App() {
       if (saved.length > 0) {
         setForecast(saved);
       }
+      console.log(saved)
     }
     loadForecast();
   }, []);
@@ -134,6 +140,12 @@ function App() {
     }
   };
 
+
+  
+
+  console.log(selectedCity, plants)
+
+
   return (
     <div className="wrap">
       {loading && (
@@ -142,6 +154,9 @@ function App() {
           <p>로딩 중입니다...</p>
         </div>
       )}
+
+
+
 
       <div className="info">
         <Accordion defaultActiveKey="0">
@@ -160,7 +175,15 @@ function App() {
           <Accordion.Item eventKey="1">
             <Accordion.Header>저장 내용 보기</Accordion.Header>
             <Accordion.Body>
-              <SavedInfo />
+              {selectedDo && selectedCity ? (
+                <SavedInfo
+                  plants={plants}
+                  region={{ do: selectedDo, city: selectedCity }}
+                  onReset={resetAllState}
+                />
+              ) : (
+                <div>저장된 데이터를 불러오는 중...</div>
+              )}
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>

@@ -1,32 +1,35 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react';
 import { regionData } from '../data/regionData.js';
 import Form from 'react-bootstrap/Form';
 
-
 function RegionSelector({ selectedDo, setSelectedDo, selectedCity, setSelectedCity }) {
   const doList = Object.keys(regionData);
-  const cityList = selectedDo ? regionData[selectedDo] : [];
+
+  const isMetropolitan = (doName) =>
+    ['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종'].includes(doName);
 
   const onDoChange = (e) => {
-    setSelectedDo(e.target.value);
-    setSelectedCity('');
+    const selected = e.target.value;
+    setSelectedDo(selected);
+    if (isMetropolitan(selected)) {
+      setSelectedCity(''); // 광역시면 시 선택 필요 없음
+    }
   };
 
   const onCityChange = (e) => {
-      console.log('선택한 도시:', e.target.value);  // 여기서 선택된 값 확인 가능
-
     setSelectedCity(e.target.value);
   };
 
-  return (
-    <div className='region' style={{ fontFamily: 'Arial, sans-serif', maxWidth: 400 }}>
-      <h4>도-시(구) 선택</h4>
+  const cityList = regionData[selectedDo] || [];
 
-      <div style={{ marginBottom: 12 }}>
-        <Form.Label htmlFor="select-do" style={{ marginRight: 8 }}>
-          도/광역시:
-        </Form.Label>
-        <Form.Select size="sm"  id="select-do" value={selectedDo} onChange={onDoChange}>
+  return (
+    <div className="region" style={{ fontFamily: 'Arial', maxWidth: 400 }}>
+      <h4>지역 선택</h4>
+
+      {/* 도/광역시 선택 */}
+      <Form.Group style={{ marginBottom: 12 }}>
+        <Form.Label>도 / 광역시</Form.Label>
+        <Form.Select value={selectedDo} onChange={onDoChange}>
           <option value="">-- 선택하세요 --</option>
           {doList.map((doName) => (
             <option key={doName} value={doName}>
@@ -34,32 +37,31 @@ function RegionSelector({ selectedDo, setSelectedDo, selectedCity, setSelectedCi
             </option>
           ))}
         </Form.Select>
-      </div>
+      </Form.Group>
 
-      <div style={{ marginBottom: 12 }}>
-        <Form.Label htmlFor="select-city" style={{ marginRight: 8 }}>
-          시/구/군:
-        </Form.Label>
-        <Form.Select size="sm"
-          id="select-city"
-          value={selectedCity}
-          onChange={onCityChange}
-          disabled={!selectedDo}
-        >
-          <option value="">-- 선택하세요 --</option>
-          {cityList.map((cityName) => (
-            <option key={cityName} value={cityName}>
-              {cityName}
-            </option>
-          ))}
-        </Form.Select>
-      </div>
-
-      {selectedDo && selectedCity && (
-        <p>
-          선택한 지역: <b>{selectedDo}</b> - <b>{selectedCity}</b>
-        </p>
+      {/* 시/군 선택 (도만 해당) */}
+      {!isMetropolitan(selectedDo) && cityList.length > 0 && (
+        <Form.Group style={{ marginBottom: 12 }}>
+          <Form.Label>시 / 군</Form.Label>
+          <Form.Select value={selectedCity} onChange={onCityChange}>
+            <option value="">-- 선택하세요 --</option>
+            {cityList.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
       )}
+
+      {/* 결과 표시 */}
+      <p>
+        선택한 지역:{' '}
+        <strong>
+          {selectedDo}
+          {!isMetropolitan(selectedDo) && selectedCity ? ` ${selectedCity}` : ''}
+        </strong>
+      </p>
     </div>
   );
 }
