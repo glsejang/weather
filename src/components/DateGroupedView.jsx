@@ -89,7 +89,7 @@ export function DateGroupedView({ data, forecast }) {
                   padding: '0.5rem 1rem',
                 }}
               >
-                <Card.Title style={{ margin: 0 }}>
+                <Card.Title className='card_title' style={{ margin: 0 }}>
                   <span>{group.date}</span>
                   {weatherData.conditionKo && (
                     <>
