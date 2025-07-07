@@ -38,4 +38,27 @@
 .card_title{
   width: 100%;
   display: flex;
+  .preview{
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    
+    span{
+      display: block;
+      width: 100%;
+    }
+  }
+  .details{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 50%;
+    p{
+      padding: 0;
+      margin:0 ;
+    }
+  }
+ 
 }

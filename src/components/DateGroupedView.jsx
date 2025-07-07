@@ -87,20 +87,28 @@ export function DateGroupedView({ data, forecast }) {
                   height: '100%',
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   padding: '0.5rem 1rem',
+                  display: 'flex',
+                  alignItems: 'center'
                 }}
               >
                 <Card.Title className='card_title' style={{ margin: 0 }}>
-                  <span>{group.date}</span>
+                  
                   {weatherData.conditionKo && (
                     <>
-                      <span> - {weatherData.conditionKo}</span>
+                    <div className='preview'>
+                      <span className='date'>{group.date}</span>
+                      <span className='condition'> {weatherData.conditionKo}</span>
+                    </div>
                       <img
                         src={`https:${weatherData.icon}`}
                         alt={weatherData.conditionKo}
-                        style={{ width: 20, height: 20, marginLeft: 8 }}
-                      />
-                      <div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-                      🌡 {weatherData.avgTemp}℃ &nbsp; 💧 {weatherData.humidity}% &nbsp; ☔ {weatherData.rainChance}%
+                        style={{ width: 50, height: 50, marginRight: 20 }}
+                        />
+                      
+                      <div className='details' style={{ fontSize: '0.9rem' }}>
+                        
+                        <p>평균온도 :🌡 {weatherData.avgTemp}℃</p>
+                        <p>💧 {weatherData.humidity}% &nbsp; ☔ {weatherData.rainChance}%</p>
                     </div>
                     </>
                   )}
